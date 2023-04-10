@@ -1,24 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
+
 import './App.css';
+import ReminderList from './components/ReminderList';
+import { Reminder } from './components/ReminderList';
+import { useEffect, useState } from 'react';
+import serviseReminder from './services/serviceReminder';
+import NewReminder from "./components/NewReminder"
+import serviceReminder from './services/serviceReminder';
+
+
+
 
 function App() {
+
+   const [reminder, setReminder] = useState<Reminder []>([
+])
+  
+useEffect(() => {
+   loadReminder();
+}, [])
+
+const loadReminder = async () => {
+ const reminders = await serviseReminder.getReminder();
+ setReminder(reminders)
+};
+
+const deleteReminder = (id: number) => {
+    setReminder(reminder.filter((reminder)=> reminder.id !== id))
+    console.log("removing...") 
+};
+
+const addReminder = async (title:string) =>{
+ const newReminder = await serviceReminder.addReminder(title)
+ setReminder([newReminder, ...reminder] ) // if you want exiting remiders [newReminder, ...reminder]
+}
+ 
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <NewReminder onAddReminder={addReminder} />
+      <ReminderList items={reminder} onRemove={deleteReminder}/>
     </div>
   );
 }
